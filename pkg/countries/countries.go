@@ -39,8 +39,8 @@ func GetAll(logger *zap.Logger) []Country {
 	)
 	singleView.Limit(&colly.LimitRule{
 		Parallelism: 5,
-		Delay:       1 * time.Second,
-		RandomDelay: 5 * time.Second,
+		Delay:       1 * time.Second / 3,
+		RandomDelay: 2 * time.Second,
 	})
 
 	stateView := colly.NewCollector(
@@ -50,7 +50,7 @@ func GetAll(logger *zap.Logger) []Country {
 	stateView.Limit(&colly.LimitRule{
 		Parallelism: 5,
 		Delay:       1 * time.Second / 2,
-		RandomDelay: 3 * time.Second,
+		RandomDelay: 2 * time.Second,
 	})
 
 	countries := []Country{}
@@ -71,7 +71,7 @@ func GetAll(logger *zap.Logger) []Country {
 		countryName := c.ChildText("table tr:nth-child(3) td:nth-child(2) a")
 		country := Country{
 			Code: countryCode,
-			Name: countryName,
+			Name: escape(countryName),
 		}
 
 		countries = append(countries, country)
@@ -86,20 +86,23 @@ func GetAll(logger *zap.Logger) []Country {
 	// Get the state/province name and id
 	stateView.OnHTML("#content", func(p *colly.HTMLElement) {
 		// Find the country from the breadcrumbs
-		countryName := p.DOM.Find("ul li:nth-child(3) a").Text()
+		countryName := escape(p.DOM.Find("ul li:nth-child(3) a").Text())
 		regions := []Region{}
 		p.DOM.Find("table tbody tr").Each(func(i int, s *goquery.Selection) {
 			region := Region{
 				ID:   trim(s.Find("td:nth-child(2)").Text()),
-				Name: s.Find("td:nth-child(3) a").Text(),
+				Name: escape(s.Find("td:nth-child(3) a").Text()),
 			}
 			regions = append(regions, region)
 		})
 
-		// Write the regions to the country data as it comes in
-		for ic, country := range countries {
-			if countryName == country.Name {
-				countries[ic].Regions = regions
+		// Ignore regions that are empty like islands
+		if len(regions) > 0 {
+			// Write the regions to the country data as it comes in
+			for ic, country := range countries {
+				if countryName == country.Name {
+					countries[ic].Regions = regions
+				}
 			}
 		}
 	})
@@ -138,4 +141,8 @@ func GetAll(logger *zap.Logger) []Country {
 
 func trim(str string) string {
 	return strings.Replace(str, " ", "", -1)
+}
+
+func escape(str string) string {
+	return strings.Replace(str, "'", "’", -1)
 }

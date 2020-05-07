@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 
+	"github.com/etiennemarais/world-cities-database/cmd/generate"
 	"github.com/etiennemarais/world-cities-database/cmd/list"
 	"github.com/etiennemarais/world-cities-database/pkg/logger"
 	"github.com/spf13/cobra"
@@ -22,6 +23,7 @@ func main() {
 
 	cmd.AddCommand(
 		list.Command(ctx, logger),
+		generate.Command(ctx, logger),
 	)
 
 	if err := cmd.ExecuteContext(ctx); err != nil {
