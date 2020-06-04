@@ -1,0 +1,9 @@
+# .goreleaser.yml
+# Build customization
+builds:
+  - main: main.go
+    binary: world-cities-database
+    goos:
+      - darwin
+    goarch:
+      - amd64

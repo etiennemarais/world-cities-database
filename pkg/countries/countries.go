@@ -28,7 +28,7 @@ func GetAll(logger *zap.Logger) []Country {
 		colly.Async(true),
 	)
 
-	listView.Limit(&colly.LimitRule{
+	_ = listView.Limit(&colly.LimitRule{
 		Parallelism: 1,
 		RandomDelay: 30 * time.Second,
 	})
@@ -37,7 +37,7 @@ func GetAll(logger *zap.Logger) []Country {
 		colly.UserAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"),
 		colly.AllowedDomains("www.worldcitiesdb.com"),
 	)
-	singleView.Limit(&colly.LimitRule{
+	_ = singleView.Limit(&colly.LimitRule{
 		Parallelism: 5,
 		Delay:       1 * time.Second / 3,
 		RandomDelay: 2 * time.Second,
@@ -47,7 +47,7 @@ func GetAll(logger *zap.Logger) []Country {
 		colly.UserAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"),
 		colly.AllowedDomains("www.worldcitiesdb.com"),
 	)
-	stateView.Limit(&colly.LimitRule{
+	_ = stateView.Limit(&colly.LimitRule{
 		Parallelism: 5,
 		Delay:       1 * time.Second / 2,
 		RandomDelay: 2 * time.Second,
@@ -59,7 +59,7 @@ func GetAll(logger *zap.Logger) []Country {
 		e.DOM.Find("table tbody tr td:nth-child(2) a").Each(func(i int, s *goquery.Selection) {
 			url, exists := s.Attr("href")
 			if exists {
-				singleView.Visit(fmt.Sprintf("http://www.worldcitiesdb.com%s", url))
+				_ = singleView.Visit(fmt.Sprintf("http://www.worldcitiesdb.com%s", url))
 			}
 		})
 	})
@@ -80,7 +80,7 @@ func GetAll(logger *zap.Logger) []Country {
 	singleView.OnHTML("div.infolink.alignc", func(i *colly.HTMLElement) {
 		// Find the link to the provinces/state list
 		url := i.ChildAttr("a.minfo[href*=\"state\"]", "href")
-		stateView.Visit(fmt.Sprintf("http://www.worldcitiesdb.com%s", url))
+		_ = stateView.Visit(fmt.Sprintf("http://www.worldcitiesdb.com%s", url))
 	})
 
 	// Get the state/province name and id
@@ -132,7 +132,7 @@ func GetAll(logger *zap.Logger) []Country {
 		fmt.Println("Single View Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
 	})
 
-	listView.Visit("http://www.worldcitiesdb.com/country/list")
+	_ = listView.Visit("http://www.worldcitiesdb.com/country/list")
 
 	listView.Wait()
 

@@ -22,7 +22,11 @@ func Command(ctx context.Context, logger *zap.Logger) *cobra.Command {
 			logger.Info("Listing countries")
 
 			countries := countries.GetAll(logger)
-			pp.Println(countries)
+			_, err := pp.Println(countries)
+
+			if err != nil {
+				logger.Fatal(err.Error(), zap.Error(err))
+			}
 
 			return nil
 		},
