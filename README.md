@@ -1,5 +1,7 @@
 # World Cities Database
 
+![Go](https://github.com/etiennemarais/world-cities-database/workflows/Go/badge.svg?branch=master)
+
 A cli command to visit the [worldcitiesdb.com/country/list](http://www.worldcitiesdb.com/country/list) and compile the country/regional data into usable sql migrations for projects that are already normalised.
 
 ## Installation
