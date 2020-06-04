@@ -51,13 +51,13 @@ func Command(ctx context.Context, logger *zap.Logger) *cobra.Command {
 				}
 			}
 
-			countriesFilename := fmt.Sprintf("dist/%s.sql", getFilename("countries"))
+			countriesFilename := fmt.Sprintf("generated/%s.sql", getFilename("countries"))
 			err := writeFile(bc, countriesFilename, logger)
 			if err != nil {
 				logger.Error(fmt.Sprintf("Error writing file to %s", countriesFilename), zap.Error(err))
 			}
 
-			regionsFilename := fmt.Sprintf("dist/%s.sql", getFilename("regions"))
+			regionsFilename := fmt.Sprintf("generated/%s.sql", getFilename("regions"))
 			err = writeFile(br, regionsFilename, logger)
 			if err != nil {
 				logger.Error(fmt.Sprintf("Error writing file to %s", regionsFilename), zap.Error(err))
