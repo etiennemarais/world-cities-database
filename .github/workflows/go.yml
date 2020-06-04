@@ -21,4 +21,4 @@ jobs:
 
       - run: go test ./...
 
-      - run: go build cmd/things/main.go
+      - run: go build main.go
